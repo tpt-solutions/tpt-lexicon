@@ -1,0 +1,17 @@
+[package]
+name = "tpt-lexicon-ingest"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Streaming, syntax-aware parser yielding semantic chunks without full-string allocation."
+readme = "README.md"
+keywords = ["parser", "streaming", "tree-sitter", "no-std", "ast"]
+categories = ["parsing", "no-std", "text-processing"]
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+
+[dev-dependencies]

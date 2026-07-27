@@ -1,0 +1,16 @@
+[package]
+name = "tpt-lexicon-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Zero-copy, no_std-compatible tokenizer engine with parallel prefix-sum BPE."
+readme = "README.md"
+keywords = ["tokenizer", "no-std", "nlp", "bpe", "llm"]
+categories = ["text-processing", "no-std", "parser-implementations"]
+
+[dependencies]
+
+[dev-dependencies]

@@ -1,0 +1,17 @@
+[package]
+name = "tpt-lexicon-ir"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Symbolic intermediate representation with fractal/recursive compression for structured data."
+readme = "README.md"
+keywords = ["ir", "compression", "ast", "no-std", "serialization"]
+categories = ["data-structures", "no-std", "compression"]
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+
+[dev-dependencies]

@@ -1,0 +1,17 @@
+[package]
+name = "tpt-lexicon-translate"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Translation bridge: JIT-unrolls IR into legacy BPE token IDs and cross-translates to external IRs."
+readme = "README.md"
+keywords = ["tokenizer", "huggingface", "bpe", "interop", "llm"]
+categories = ["text-processing", "science"]
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+
+[dev-dependencies]

@@ -1,0 +1,17 @@
+[package]
+name = "tpt-lexicon-gpu"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Optional GPU acceleration (wgpu / CUDA / Metal) for SRAM-native parallel tokenization."
+readme = "README.md"
+keywords = ["gpu", "wgpu", "cuda", "tokenizer", "acceleration"]
+categories = ["rendering", "science", "hardware-support"]
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+
+[dev-dependencies]

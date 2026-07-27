@@ -1,0 +1,17 @@
+[package]
+name = "tpt-lexicon-verify"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Formal verification of TPT Lexicon IR edits and outputs against structural invariants."
+readme = "README.md"
+keywords = ["verification", "formal-methods", "static-analysis", "no-std"]
+categories = ["development-tools", "no-std"]
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+
+[dev-dependencies]
