@@ -17,6 +17,10 @@ path = "pipeline.rs"
 name = "hf_import"
 path = "hf_import.rs"
 
+[[test]]
+name = "integration"
+path = "tests/integration.rs"
+
 [dependencies]
 tpt-lexicon-core = { workspace = true }
 tpt-lexicon-ingest = { workspace = true }
