@@ -16,16 +16,19 @@ Part of [TPT Lexicon](https://github.com/tpt-solutions/tpt-lexicon).
 ## Usage
 
 ```rust
-use tpt_lexicon_ir::{IrNode, IrForest, CompressRule, compress, decompress};
+use tpt_lexicon_ir::{IrNode, IrForest, compress, decompress};
 
 let forest = IrForest::from_nodes(vec![
-    IrNode::text(b"Hello world"),
-    IrNode::code(b"let x = 1;"),
-    IrNode::text(b"Hello world"),
+    IrNode::code(b"function foo() { return 1; }"),
+    IrNode::code(b"function foo() { return 1; }"),
+    IrNode::code(b"function foo() { return 1; }"),
 ]);
 
-let rules = vec![CompressRule::new(b"Hello world")];
-let compressed = compress(&forest, &rules, 4);
+// Compress detects the repeated pattern and generates rules automatically.
+let (compressed, rules) = compress(&forest, 5);
+assert!(!rules.is_empty());
+
+// Decompress expands rules back to original byte content.
 let decompressed = decompress(&compressed, &rules);
 assert_eq!(decompressed.node_count(), forest.node_count());
 ```

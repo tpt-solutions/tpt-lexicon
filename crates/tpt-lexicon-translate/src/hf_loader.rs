@@ -40,7 +40,7 @@ impl HfTokenizer {
             message: b"input is not valid UTF-8".to_vec(),
         })?;
 
-        let model_type = extract_string_field(text, "type").unwrap_or_else(|| "BPE".to_string());
+        let model_type = extract_model_type(text).unwrap_or_else(|| "BPE".to_string());
 
         if model_type != "BPE" && model_type != "WordPiece" {
             return Err(Error::UnsupportedHfModel {
@@ -79,6 +79,20 @@ impl HfTokenizer {
             .find(|(_, &v)| v == id)
             .map(|(k, _)| k.as_str())
     }
+}
+
+/// Extract the model type from the `"model"` section of a tokenizer.json.
+///
+/// A real HF file has `"type"` keys in multiple sections (normalizer,
+/// pre_tokenizer, model). This helper scopes the search to the model object to
+/// avoid picking up the wrong value.
+fn extract_model_type(text: &str) -> Option<String> {
+    let model_pos = text.find("\"model\"")?;
+    let after_key = text.get(model_pos + 7..)?;
+    let brace_offset = after_key.find('{')?;
+    let model_obj = &after_key[brace_offset..];
+    let model_content = extract_balanced_content(model_obj, '{', '}')?;
+    extract_string_field(model_content, "type")
 }
 
 /// Extract a simple string field value from JSON text.

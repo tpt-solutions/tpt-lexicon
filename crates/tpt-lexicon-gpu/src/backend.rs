@@ -2,6 +2,27 @@
 
 use alloc::vec::Vec;
 
+/// Error type for GPU operations.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum GpuError {
+    /// The requested backend is not compiled in.
+    BackendUnavailable {
+        /// Name of the unavailable backend.
+        backend: &'static str,
+    },
+}
+
+impl core::fmt::Display for GpuError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::BackendUnavailable { backend } => write!(
+                f,
+                "GPU backend '{backend}' is not available; enable the corresponding feature"
+            ),
+        }
+    }
+}
+
 /// Available GPU backends.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GpuBackend {
@@ -51,17 +72,17 @@ pub struct GpuTokenizer {
 impl GpuTokenizer {
     /// Create a new GPU tokenizer with the given backend.
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if the requested backend is not available.
-    pub fn new(backend: GpuBackend) -> Self {
+    /// Returns [`GpuError::BackendUnavailable`] if the backend feature is not
+    /// compiled in.
+    pub fn new(backend: GpuBackend) -> Result<Self, GpuError> {
         if !backend.is_available() {
-            panic!(
-                "GPU backend '{}' is not available. Enable the corresponding feature.",
-                backend.name()
-            );
+            return Err(GpuError::BackendUnavailable {
+                backend: backend.name(),
+            });
         }
-        Self { backend }
+        Ok(Self { backend })
     }
 
     /// Returns the backend type.
@@ -106,9 +127,9 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "GPU backend")]
-    fn new_panics_when_unavailable() {
-        let _ = GpuTokenizer::new(GpuBackend::Wgpu);
+    fn new_returns_err_when_unavailable() {
+        let result = GpuTokenizer::new(GpuBackend::Wgpu);
+        assert!(matches!(result, Err(GpuError::BackendUnavailable { .. })));
     }
 
     #[test]

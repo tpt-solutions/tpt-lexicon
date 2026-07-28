@@ -14,5 +14,6 @@ categories = ["text-processing", "science"]
 [dependencies]
 tpt-lexicon-core = { workspace = true }
 tpt-lexicon-ir = { workspace = true }
+tpt-lexicon-verify = { workspace = true }
 
 [dev-dependencies]

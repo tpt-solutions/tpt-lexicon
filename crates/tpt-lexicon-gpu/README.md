@@ -7,20 +7,20 @@ Part of [TPT Lexicon](https://github.com/tpt-solutions/tpt-lexicon).
 ## Features
 
 - **Feature-gated backends** — enable `wgpu`, `cuda`, or `metal` features for GPU-accelerated tokenization
-- **`GpuBackend`** — trait abstraction over available GPU backends
+- **`GpuBackend`** — enum of available GPU backends (`Wgpu`, `Cuda`, `Metal`)
 - **`GpuTokenizer`** — thin wrapper that delegates to the selected backend
-- **Graceful fallback** — returns `Error::Unavailable` when no GPU backend is compiled in
+- **`GpuError`** — typed error returned when no GPU backend is compiled in
 - Fully optional — the rest of the TPT Lexicon workspace builds and runs without this crate
 
 ## Usage
 
 ```rust
-use tpt_lexicon_gpu::GpuTokenizer;
+use tpt_lexicon_gpu::{GpuBackend, GpuError, GpuTokenizer};
 
-// Without any feature flag, this returns Unavailable.
-// Enable `wgpu` feature for actual GPU acceleration.
-let result = GpuTokenizer::new();
-assert!(result.is_err());
+// Without any feature flag, GpuTokenizer::new returns GpuError::BackendUnavailable.
+// Enable the `wgpu` feature for actual GPU acceleration.
+let result = GpuTokenizer::new(GpuBackend::Wgpu);
+assert!(matches!(result, Err(GpuError::BackendUnavailable { .. })));
 ```
 
 ## Status

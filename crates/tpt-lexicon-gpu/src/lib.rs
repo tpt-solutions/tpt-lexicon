@@ -20,7 +20,7 @@ extern crate alloc;
 
 mod backend;
 
-pub use crate::backend::{GpuBackend, GpuTokenizer};
+pub use crate::backend::{GpuBackend, GpuError, GpuTokenizer};
 
 /// Crate version, exposed for runtime feature negotiation with other
 /// TPT Lexicon crates.

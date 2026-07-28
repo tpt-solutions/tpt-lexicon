@@ -82,7 +82,7 @@ pub fn compress<'a>(
     for node in forest.nodes() {
         match node {
             IrNode::Code(bytes) | IrNode::Structured(bytes) => {
-                let replacement = apply_compression_bytes(bytes, &rule_map, &rules);
+                let replacement = apply_compression_bytes(bytes, &rule_map);
                 match replacement {
                     Some(repl) => compressed_nodes.push(repl),
                     None => compressed_nodes.push(clone_node(node)),
@@ -121,43 +121,19 @@ pub fn decompress<'a>(forest: &IrForest<'a>, rules: &[CompressRule<'static>]) ->
 }
 
 /// Try to compress a byte payload using the rule map.
-/// Returns a Compressed node if the payload contains a recognized pattern.
+///
+/// Returns a `Compressed` node only when the entire payload equals the pattern.
+/// Partial (substring) matches are rejected: encoding a substring match as a
+/// single `Compressed` node would silently discard the surrounding bytes on
+/// decompression.
 fn apply_compression_bytes<'a>(
     bytes: &'a [u8],
     rule_map: &BTreeMap<Vec<u8>, usize>,
-    _rules: &[CompressRule<'a>],
 ) -> Option<IrNode<'a>> {
-    // Find the first matching pattern in the payload.
-    for (pattern, &rule_idx) in rule_map {
-        if let Some(offset) = find_subslice(bytes, pattern) {
-            // Wrap the non-matching prefix, the rule reference, and the
-            // non-matching suffix into a list-like compressed node.
-            let mut children: Vec<IrNode<'a>> = Vec::new();
-
-            if offset > 0 {
-                children.push(IrNode::Text(&bytes[..offset]));
-            }
-
-            children.push(IrNode::Compressed {
-                rule_index: rule_idx,
-                args: vec![],
-            });
-
-            let after = offset + pattern.len();
-            if after < bytes.len() {
-                children.push(IrNode::Text(&bytes[after..]));
-            }
-
-            // Return the first child as the primary compressed node.
-            // For simplicity, we compress the whole payload into a single
-            // compressed node referencing the rule.
-            return Some(IrNode::Compressed {
-                rule_index: rule_idx,
-                args: vec![],
-            });
-        }
-    }
-    None
+    rule_map.get(bytes).map(|&rule_idx| IrNode::Compressed {
+        rule_index: rule_idx,
+        args: alloc::vec![],
+    })
 }
 
 /// Expand a rule template into a concrete node.
@@ -196,14 +172,6 @@ fn expand_rule<'a>(rule: &CompressRule<'a>, _args: &[usize]) -> IrNode<'a> {
     // where the forest owns its data.
     let static_buf: &'static [u8] = alloc::boxed::Box::leak(buf.into_boxed_slice());
     IrNode::Text(static_buf)
-}
-
-/// Find `needle` within `haystack`, returning the byte offset.
-fn find_subslice(haystack: &[u8], needle: &[u8]) -> Option<usize> {
-    if needle.is_empty() || needle.len() > haystack.len() {
-        return None;
-    }
-    haystack.windows(needle.len()).position(|w| w == needle)
 }
 
 /// Clone a forest (deep clone all nodes).
@@ -255,7 +223,10 @@ mod tests {
 
     #[test]
     fn compress_repeated_patterns() {
-        let pat = b"function foo() { return 1; }";
+        // Use a 4-byte payload: the window [4..=8] produces exactly one unique
+        // substring (the full payload), so it is guaranteed to be selected as a
+        // rule and every node gets replaced with a Compressed node.
+        let pat = b"ret;";
         let forest = IrForest::from_nodes(vec![
             IrNode::code(pat.as_slice()),
             IrNode::code(pat.as_slice()),
@@ -263,7 +234,6 @@ mod tests {
         ]);
         let (compressed, rules) = compress(&forest, 5);
         assert!(!rules.is_empty());
-        // At least some nodes should be compressed.
         let compressed_count = compressed
             .nodes()
             .iter()
@@ -297,11 +267,36 @@ mod tests {
     }
 
     #[test]
-    fn find_subslice_basic() {
-        assert_eq!(find_subslice(b"hello world", b"world"), Some(6));
-        assert_eq!(find_subslice(b"hello", b"xyz"), None);
-        assert_eq!(find_subslice(b"", b"a"), None);
-        assert_eq!(find_subslice(b"a", b""), None);
+    fn no_data_loss_for_substring_match() {
+        // "ret;" (4 bytes) is a strict substring of the first node's payload
+        // but the full payload of the second and third. Only the full-payload
+        // nodes must be compressed; the first must pass through unchanged.
+        let forest = IrForest::from_nodes(vec![
+            IrNode::code(b"prefix ret; suffix"),
+            IrNode::code(b"ret;"),
+            IrNode::code(b"ret;"),
+        ]);
+        let (compressed, rules) = compress(&forest, 5);
+
+        // A rule for b"ret;" must exist (it appears twice as the full payload).
+        assert!(!rules.is_empty());
+
+        // Node 0 must remain Code with all bytes intact.
+        let n0 = compressed.get(0).unwrap();
+        assert!(
+            matches!(n0, IrNode::Code(b) if *b == b"prefix ret; suffix"),
+            "substring match must not clobber surrounding bytes, got {n0:?}"
+        );
+
+        // Nodes 1 and 2 are full-payload matches — must be Compressed.
+        assert!(matches!(compressed.get(1).unwrap(), IrNode::Compressed { .. }));
+        assert!(matches!(compressed.get(2).unwrap(), IrNode::Compressed { .. }));
+
+        // Decompression must restore the payload content for compressed nodes.
+        let decompressed = decompress(&compressed, &rules);
+        assert_eq!(decompressed.node_count(), 3);
+        assert_eq!(decompressed.get(1).unwrap().as_bytes().unwrap(), b"ret;");
+        assert_eq!(decompressed.get(2).unwrap().as_bytes().unwrap(), b"ret;");
     }
 
     #[test]

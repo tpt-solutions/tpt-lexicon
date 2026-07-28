@@ -45,7 +45,7 @@ impl MergeIndex {
         let mut shift = 0u32;
         let mut n = min_buckets;
         while n > 1 {
-            n = (n + 1) / 2;
+            n = n.div_ceil(2);
             shift += 1;
         }
         // Ensure at least 4 bits (16 buckets minimum).

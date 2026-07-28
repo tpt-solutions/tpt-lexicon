@@ -19,7 +19,7 @@ mod error;
 mod verify;
 
 pub use crate::error::{Error, Result, VerifyError};
-pub use crate::verify::{verify_ir, VerificationReport, Verify};
+pub use crate::verify::{verify_ir, verify_with_rules, VerificationReport, Verify};
 
 /// Crate version, exposed for runtime feature negotiation with other
 /// TPT Lexicon crates.

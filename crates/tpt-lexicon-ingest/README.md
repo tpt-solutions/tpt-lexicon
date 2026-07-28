@@ -17,12 +17,16 @@ Part of [TPT Lexicon](https://github.com/tpt-solutions/tpt-lexicon).
 ## Usage
 
 ```rust
-use tpt_lexicon_ingest::Parser;
+use tpt_lexicon_ingest::{Parser, ChunkKind};
 
-let input = "# Hello\n\nSome text\n\n```rust\nlet x = 1;\n```";
-let parser = Parser::new(input.as_bytes());
-for chunk in parser {
-    println!("{:?}: {:?}", chunk.kind(), chunk.as_str());
+let input = b"# Hello\n\nSome text.\n\n```rust\nlet x = 1;\n```\n";
+let chunks: Vec<_> = Parser::new(input).collect();
+assert!(!chunks.is_empty());
+// The first chunk is a Markdown element (the header).
+assert_eq!(chunks[0].kind, ChunkKind::Markdown);
+// Each chunk exposes its bytes and a UTF-8 view.
+for chunk in &chunks {
+    println!("{:?}: {:?}", chunk.kind, chunk.as_str());
 }
 ```
 

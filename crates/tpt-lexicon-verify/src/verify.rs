@@ -4,7 +4,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 
 use crate::error::{Error, Result, VerifyError};
-use tpt_lexicon_ir::{IrForest, IrNode};
+use tpt_lexicon_ir::{CompressRule, IrForest, IrNode};
 
 /// A report of verification results.
 #[derive(Debug, Clone)]
@@ -216,6 +216,51 @@ pub fn verify_ir(forest: &IrForest<'_>) -> Result<VerificationReport> {
     }
 }
 
+/// Verify an IR forest against a rule table.
+///
+/// Runs all structural invariant checks from [`Verify::verify`] and
+/// additionally validates every [`IrNode::Compressed`] node:
+///
+/// - `rule_index` must be within bounds of `rules`
+/// - `args.len()` must equal `rules[rule_index].arity`
+///
+/// Returns `Err` on the first violation found.
+pub fn verify_with_rules<'a>(
+    forest: &IrForest<'a>,
+    rules: &[CompressRule<'_>],
+) -> Result<VerificationReport> {
+    let base = forest.verify();
+    let mut errors = base.errors;
+
+    for (i, node) in forest.nodes().iter().enumerate() {
+        if let IrNode::Compressed { rule_index, args } = node {
+            if *rule_index >= rules.len() {
+                errors.push(VerifyError::InvalidRuleReference {
+                    node_index: i,
+                    rule_index: *rule_index,
+                });
+            } else {
+                let expected = rules[*rule_index].arity;
+                let actual = args.len();
+                if actual != expected {
+                    errors.push(VerifyError::ArityMismatch {
+                        node_index: i,
+                        expected,
+                        actual,
+                    });
+                }
+            }
+        }
+    }
+
+    if errors.is_empty() {
+        Ok(VerificationReport::pass())
+    } else {
+        let first = errors[0].clone();
+        Err(Error::VerificationFailed(first))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -379,5 +424,45 @@ mod tests {
     #[test]
     fn version_is_nonempty() {
         assert!(!VERSION.is_empty());
+    }
+
+    // verify_with_rules tests
+    #[test]
+    fn verify_with_rules_valid() {
+        use tpt_lexicon_ir::{CompressRule, TemplateToken};
+        let rule = CompressRule::new(vec![TemplateToken::Literal(b"hello")], 0);
+        let forest = IrForest::from_nodes(vec![
+            IrNode::text(b"node0"),
+            IrNode::Compressed {
+                rule_index: 0,
+                args: vec![],
+            },
+        ]);
+        assert!(super::verify_with_rules(&forest, &[rule]).is_ok());
+    }
+
+    #[test]
+    fn verify_with_rules_invalid_rule_index() {
+        use tpt_lexicon_ir::{CompressRule, TemplateToken};
+        let rule = CompressRule::new(vec![TemplateToken::Literal(b"x")], 0);
+        let forest = IrForest::from_nodes(vec![IrNode::Compressed {
+            rule_index: 5, // out of bounds — only rule 0 exists
+            args: vec![],
+        }]);
+        let result = super::verify_with_rules(&forest, &[rule]);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn verify_with_rules_arity_mismatch() {
+        use tpt_lexicon_ir::{CompressRule, IrNode, TemplateToken};
+        // Rule has arity 1 but the node provides 0 args.
+        let rule = CompressRule::new(vec![TemplateToken::Placeholder(0)], 1);
+        let forest = IrForest::from_nodes(vec![IrNode::Compressed {
+            rule_index: 0,
+            args: vec![], // should have 1 arg
+        }]);
+        let result = super::verify_with_rules(&forest, &[rule]);
+        assert!(result.is_err());
     }
 }

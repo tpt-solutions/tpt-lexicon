@@ -15,14 +15,15 @@ Zero-copy BPE tokenizer engine for [TPT Lexicon](https://github.com/tpt-solution
 ## Usage
 
 ```rust
-use tpt_lexicon_core::{BpeTokenizer, Vocab, train_vocab};
+use tpt_lexicon_core::{BpeTokenizer, Vocab};
 
 let corpus = b"hello world hello world hello";
-let vocab = train_vocab(corpus, 100, &[]);
+let vocab = Vocab::train(corpus, 20).unwrap();
 
 let tok = BpeTokenizer::new(&vocab);
 let tokens = tok.encode(b"hello world");
 let decoded = tokens.as_bytes(); // zero-copy decode
+assert_eq!(decoded, b"hello world");
 ```
 
 ## Status

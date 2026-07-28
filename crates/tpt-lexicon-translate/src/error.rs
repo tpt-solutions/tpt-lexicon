@@ -27,6 +27,11 @@ pub enum Error {
         /// Description of the error.
         message: alloc::vec::Vec<u8>,
     },
+    /// The IR forest failed structural verification before rendering.
+    VerificationFailed {
+        /// Description of the verification failure.
+        message: alloc::vec::Vec<u8>,
+    },
 }
 
 impl fmt::Display for Error {
@@ -60,6 +65,13 @@ impl fmt::Display for Error {
                 write!(
                     f,
                     "IR translation error at node {node_index}: {}",
+                    core::str::from_utf8(message).unwrap_or("<invalid utf-8>")
+                )
+            }
+            Self::VerificationFailed { message } => {
+                write!(
+                    f,
+                    "IR verification failed: {}",
                     core::str::from_utf8(message).unwrap_or("<invalid utf-8>")
                 )
             }

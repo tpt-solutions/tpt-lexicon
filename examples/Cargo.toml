@@ -1,0 +1,25 @@
+[package]
+name = "tpt-lexicon-examples"
+version.workspace = true
+edition.workspace = true
+publish = false
+description = "Runnable examples for the TPT Lexicon crate family."
+
+[[example]]
+name = "quickstart"
+path = "quickstart.rs"
+
+[[example]]
+name = "pipeline"
+path = "pipeline.rs"
+
+[[example]]
+name = "hf_import"
+path = "hf_import.rs"
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+tpt-lexicon-ingest = { workspace = true }
+tpt-lexicon-ir = { workspace = true }
+tpt-lexicon-verify = { workspace = true }
+tpt-lexicon-translate = { workspace = true }

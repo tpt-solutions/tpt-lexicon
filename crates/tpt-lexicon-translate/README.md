@@ -16,15 +16,23 @@ Part of [TPT Lexicon](https://github.com/tpt-solutions/tpt-lexicon).
 
 ```rust
 use tpt_lexicon_translate::{LegacyBridge, LegacyVocab};
-use tpt_lexicon_ir::{IrNode, IrForest};
+use tpt_lexicon_ir::{IrForest, IrNode};
 
-let mut vocab = LegacyVocab::new(0);
-vocab.insert(0, b"hello");
-vocab.insert(1, b" ");
+let mut vocab = LegacyVocab::new(0); // 0 = unknown-token ID
+vocab.insert(b"hello", 1);
+vocab.insert(b" ", 2);
+vocab.insert(b"world", 3);
 
 let bridge = LegacyBridge::new(&vocab);
+
+// Unroll raw bytes into token IDs.
+let ids = bridge.unroll_bytes(b"hello world");
+assert_eq!(ids, vec![1, 2, 3]);
+
+// Or unroll an entire IR forest (Text/Code/Structured nodes only).
 let forest = IrForest::from_nodes(vec![IrNode::text(b"hello world")]);
-let ids = bridge.unroll(&forest);
+let ids = bridge.unroll_forest(&forest);
+assert_eq!(ids, vec![1, 2, 3]);
 ```
 
 ## Status

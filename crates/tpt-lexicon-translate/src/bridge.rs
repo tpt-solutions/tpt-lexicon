@@ -3,6 +3,11 @@
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
+use tpt_lexicon_ir::IrForest;
+use tpt_lexicon_verify::verify_ir;
+
+use crate::error::{Error, Result};
+
 /// A mapping from byte sequences to legacy token IDs.
 ///
 /// This mirrors the vocabulary used by a pre-trained model (e.g., Llama,
@@ -148,6 +153,34 @@ impl<'a> LegacyBridge<'a> {
             }
         }
         bytes
+    }
+
+    /// Unroll all IR nodes in a forest into a flat sequence of token IDs.
+    ///
+    /// Nodes with byte payloads (`Text`, `Code`, `Structured`) are translated
+    /// via [`unroll_bytes`]; structural nodes (`List`, `Reference`,
+    /// `Compressed`) are skipped.
+    ///
+    /// [`unroll_bytes`]: LegacyBridge::unroll_bytes
+    pub fn unroll_forest(&self, forest: &IrForest<'_>) -> Vec<u32> {
+        let mut ids = Vec::new();
+        for node in forest.nodes() {
+            if let Some(bytes) = node.as_bytes() {
+                ids.extend_from_slice(&self.unroll_bytes(bytes));
+            }
+        }
+        ids
+    }
+
+    /// Verify IR structural integrity, then unroll into legacy token IDs.
+    ///
+    /// Calls [`tpt_lexicon_verify::verify_ir`] before translation. Returns
+    /// [`Error::VerificationFailed`] if the forest fails any structural check.
+    pub fn unroll_forest_verified(&self, forest: &IrForest<'_>) -> Result<Vec<u32>> {
+        verify_ir(forest).map_err(|e| Error::VerificationFailed {
+            message: alloc::format!("{e}").into_bytes(),
+        })?;
+        Ok(self.unroll_forest(forest))
     }
 }
 

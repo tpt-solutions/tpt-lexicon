@@ -6,6 +6,42 @@ See [`spec.txt`](spec.txt) for the full design document and [`todo.md`](todo.md)
 
 Status: **pre-alpha** — implementation in progress. No crate is published yet.
 
+## Quickstart
+
+```rust
+use tpt_lexicon_core::{BpeTokenizer, Vocab};
+
+// Train a BPE vocabulary from a byte corpus.
+let vocab = Vocab::train(b"hello world hello world hello", 20).unwrap();
+let tok = BpeTokenizer::new(&vocab);
+
+// Zero-copy tokenization — tokens borrow directly from the input.
+let tokens = tok.encode(b"hello world");
+assert_eq!(tokens.as_bytes(), b"hello world"); // lossless round-trip
+```
+
+See the [`examples/`](examples/) directory for runnable end-to-end demos:
+
+| Example | What it shows |
+|---|---|
+| `cargo run --example quickstart` | Train → tokenize → decode |
+| `cargo run --example pipeline` | Ingest → IR → compress → verify → translate |
+| `cargo run --example hf_import` | Load HuggingFace `tokenizer.json` → translate |
+
+## Architecture
+
+```mermaid
+graph LR
+    A[Raw bytes / source] --> B[tpt-lexicon-ingest\nStreaming parser]
+    B --> C[tpt-lexicon-ir\nSymbolic IR + fractal compression]
+    C --> D[tpt-lexicon-verify\nFormal structural verification]
+    D --> E[tpt-lexicon-translate\nLegacy BPE bridge]
+    E --> F[Token IDs\nfor pre-trained model]
+    C -.->|parallel tokenizer| G[tpt-lexicon-gpu\nwgpu / CUDA / Metal]
+    H[tpt-lexicon-core\nZero-copy BPE engine] --> E
+    H --> G
+```
+
 ## Crates
 
 | Crate | Role | `no_std` |

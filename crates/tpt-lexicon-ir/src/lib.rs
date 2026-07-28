@@ -42,7 +42,7 @@ mod node;
 
 pub use crate::compress::{compress, decompress};
 pub use crate::error::{Error, Result};
-pub use crate::node::{CompressRule, IrForest, IrNode};
+pub use crate::node::{CompressRule, IrForest, IrNode, TemplateToken};
 
 /// Crate version, exposed for runtime feature negotiation with other
 /// TPT Lexicon crates.
