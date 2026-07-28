@@ -1,12 +1,12 @@
 # tpt-lexicon-core
 
-Foundational tokenizer engine for [TPT Lexicon](https://github.com/REPLACE_ME/tpt-lexicon).
+Foundational tokenizer engine for [TPT Lexicon](https://github.com/tpt-solutions/tpt-lexicon).
 
-`no_std`, zero-copy UTF-8 slicing, parallel prefix-sum BPE, and SRAM-native
+`no_std`, zero-copy UTF-8 slicing, sequential BPE tokenization, and
 vocabulary mapping. This crate has no dependency on the rest of the
 workspace and is safe to use standalone.
 
-Status: **pre-alpha scaffold** — see the workspace [`todo.md`](https://github.com/REPLACE_ME/tpt-lexicon/blob/main/todo.md)
+Status: **pre-alpha** — see the workspace [`todo.md`](https://github.com/tpt-solutions/tpt-lexicon/blob/master/todo.md)
 for implementation progress.
 
 ## License

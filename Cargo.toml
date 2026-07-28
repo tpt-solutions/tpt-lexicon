@@ -14,7 +14,7 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/REPLACE_ME/tpt-lexicon"
+repository = "https://github.com/tpt-solutions/tpt-lexicon"
 authors = ["TPT Solutions"]
 
 [workspace.dependencies]
@@ -23,6 +23,7 @@ tpt-lexicon-ingest = { path = "crates/tpt-lexicon-ingest", version = "0.1.0" }
 tpt-lexicon-ir = { path = "crates/tpt-lexicon-ir", version = "0.1.0" }
 tpt-lexicon-verify = { path = "crates/tpt-lexicon-verify", version = "0.1.0" }
 tpt-lexicon-translate = { path = "crates/tpt-lexicon-translate", version = "0.1.0" }
+tpt-lexicon-gpu = { path = "crates/tpt-lexicon-gpu", version = "0.1.0" }
 
 [profile.release]
 lto = true

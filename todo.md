@@ -12,7 +12,7 @@ mirror spec §8.
 - [x] `.gitignore`, `rust-toolchain.toml` (stable + clippy/rustfmt)
 - [x] CI workflow: fmt, clippy, build+test (Linux/macOS/Windows), `no_std` target check, doc build
 - [x] Root `README.md` with crate table and design-goal summary
-- [ ] Create the GitHub repo, then replace every `REPLACE_ME` placeholder in `Cargo.toml`/`workspace.package.repository`, crate READMEs, and root README with the real URL
+- [x] Create the GitHub repo, then replace every `REPLACE_ME` placeholder in `Cargo.toml`/`workspace.package.repository`, crate READMEs, and root README with the real URL
 - [ ] `git init` + initial commit
 - [ ] Push to GitHub, confirm CI workflow runs
 
@@ -89,10 +89,10 @@ mirror spec §8.
 ## crates.io Release Readiness (all 6 crates released together as `v0.1.0`)
 
 - [ ] Confirm all 6 crate names are available/reserved on crates.io
-- [ ] Real `repository` URL in place of `REPLACE_ME` across all manifests
+- [x] Real `repository` URL in place of `REPLACE_ME` across all manifests
 - [ ] Every crate: `description`, `keywords` (≤5), `categories` (valid crates.io taxonomy), `readme` all set and accurate
 - [ ] Every crate: `README.md` reflects actual (not stub) functionality
-- [ ] Root `CHANGELOG.md` + per-crate changelog entries (Keep a Changelog format) for `0.1.0`
+- [x] Root `CHANGELOG.md` + per-crate changelog entries (Keep a Changelog format) for `0.1.0`
 - [ ] MSRV documented and verified in CI (`rust-version` in `[workspace.package]`)
 - [ ] All crate versions aligned at `0.1.0` (or intentionally bumped together if any diverged during development)
 - [ ] `cargo doc --workspace --no-deps` builds with zero warnings

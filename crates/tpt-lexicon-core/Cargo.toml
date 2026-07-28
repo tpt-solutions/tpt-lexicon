@@ -11,6 +11,10 @@ readme = "README.md"
 keywords = ["tokenizer", "no-std", "nlp", "bpe", "llm"]
 categories = ["text-processing", "no-std", "parser-implementations"]
 
+[features]
+default = ["alloc"]
+alloc = []
+
 [dependencies]
 
 [dev-dependencies]

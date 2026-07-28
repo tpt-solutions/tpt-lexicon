@@ -2,9 +2,9 @@
 
 Streaming, syntax-aware parser yielding semantic chunks without full-string allocation.
 
-Part of [TPT Lexicon](https://github.com/REPLACE_ME/tpt-lexicon).
+Part of [TPT Lexicon](https://github.com/tpt-solutions/tpt-lexicon).
 
-Status: **pre-alpha scaffold** — see the workspace [`todo.md`](https://github.com/REPLACE_ME/tpt-lexicon/blob/main/todo.md)
+Status: **pre-alpha** — see the workspace [`todo.md`](https://github.com/tpt-solutions/tpt-lexicon/blob/master/todo.md)
 for implementation progress.
 
 ## License

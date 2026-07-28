@@ -4,7 +4,7 @@ A neuro-symbolic preprocessing & translation suite for LLM inference pipelines: 
 
 See [`spec.txt`](spec.txt) for the full design document and [`todo.md`](todo.md) for implementation progress.
 
-Status: **pre-alpha** — workspace scaffold stage. No crate is published yet.
+Status: **pre-alpha** — implementation in progress. No crate is published yet.
 
 ## Crates
 
