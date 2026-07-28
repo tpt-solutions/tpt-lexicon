@@ -13,5 +13,6 @@ categories = ["development-tools", "no-std"]
 
 [dependencies]
 tpt-lexicon-core = { workspace = true }
+tpt-lexicon-ir = { workspace = true }
 
 [dev-dependencies]

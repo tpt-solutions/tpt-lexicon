@@ -32,6 +32,7 @@ name = "tpt-lexicon-translate"
 version = "0.1.0"
 dependencies = [
  "tpt-lexicon-core",
+ "tpt-lexicon-ir",
 ]
 
 [[package]]
@@ -39,4 +40,5 @@ name = "tpt-lexicon-verify"
 version = "0.1.0"
 dependencies = [
  "tpt-lexicon-core",
+ "tpt-lexicon-ir",
 ]

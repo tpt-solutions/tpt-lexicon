@@ -167,12 +167,10 @@ impl<'a> IrForest<'a> {
     ///
     /// Returns [`Error::InvalidReference`] if the index is out of bounds.
     pub fn get(&self, index: usize) -> Result<&IrNode<'a>> {
-        self.nodes
-            .get(index)
-            .ok_or(Error::InvalidReference {
-                index,
-                bound: self.nodes.len(),
-            })
+        self.nodes.get(index).ok_or(Error::InvalidReference {
+            index,
+            bound: self.nodes.len(),
+        })
     }
 
     /// Returns a reference to the node at the given index (panics if
@@ -313,8 +311,7 @@ impl<'a> IrForest<'a> {
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let len = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let len = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     if pos + len > data.len() {
                         return Err(Error::CorruptedData);
@@ -339,7 +336,8 @@ impl<'a> IrForest<'a> {
                     // forest would own the buffer. For now, this is acceptable
                     // for the initial API. The leaked bytes are small and
                     // bounded by the input size.
-                    let static_bytes: &'static [u8] = alloc::boxed::Box::leak(bytes.to_vec().into_boxed_slice());
+                    let static_bytes: &'static [u8] =
+                        alloc::boxed::Box::leak(bytes.to_vec().into_boxed_slice());
                     nodes.push(IrNode::Text(static_bytes));
                     pos += len;
                 }
@@ -348,13 +346,13 @@ impl<'a> IrForest<'a> {
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let len = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let len = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     if pos + len > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let static_bytes: &'static [u8] = alloc::boxed::Box::leak(data[pos..pos + len].to_vec().into_boxed_slice());
+                    let static_bytes: &'static [u8] =
+                        alloc::boxed::Box::leak(data[pos..pos + len].to_vec().into_boxed_slice());
                     nodes.push(IrNode::Code(static_bytes));
                     pos += len;
                 }
@@ -363,13 +361,13 @@ impl<'a> IrForest<'a> {
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let len = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let len = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     if pos + len > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let static_bytes: &'static [u8] = alloc::boxed::Box::leak(data[pos..pos + len].to_vec().into_boxed_slice());
+                    let static_bytes: &'static [u8] =
+                        alloc::boxed::Box::leak(data[pos..pos + len].to_vec().into_boxed_slice());
                     nodes.push(IrNode::Structured(static_bytes));
                     pos += len;
                 }
@@ -378,16 +376,15 @@ impl<'a> IrForest<'a> {
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let count = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let count = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     let mut indices = Vec::with_capacity(count);
                     for _ in 0..count {
                         if pos + 4 > data.len() {
                             return Err(Error::CorruptedData);
                         }
-                        let idx = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                            as usize;
+                        let idx =
+                            u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                         pos += 4;
                         indices.push(idx);
                     }
@@ -398,8 +395,7 @@ impl<'a> IrForest<'a> {
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let idx = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let idx = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     nodes.push(IrNode::Reference(idx));
                 }
@@ -408,22 +404,22 @@ impl<'a> IrForest<'a> {
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let rule_index = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let rule_index =
+                        u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     if pos + 4 > data.len() {
                         return Err(Error::CorruptedData);
                     }
-                    let arg_count = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                        as usize;
+                    let arg_count =
+                        u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                     pos += 4;
                     let mut args = Vec::with_capacity(arg_count);
                     for _ in 0..arg_count {
                         if pos + 4 > data.len() {
                             return Err(Error::CorruptedData);
                         }
-                        let arg = u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap())
-                            as usize;
+                        let arg =
+                            u32::from_le_bytes(data[pos..pos + 4].try_into().unwrap()) as usize;
                         pos += 4;
                         args.push(arg);
                     }
@@ -447,6 +443,7 @@ impl Default for IrForest<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::vec;
 
     #[test]
     fn node_kind_names() {

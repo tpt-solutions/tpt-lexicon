@@ -11,6 +11,12 @@ readme = "README.md"
 keywords = ["gpu", "wgpu", "cuda", "tokenizer", "acceleration"]
 categories = ["rendering", "science", "hardware-support"]
 
+[features]
+default = []
+wgpu = []
+cuda = []
+metal = []
+
 [dependencies]
 tpt-lexicon-core = { workspace = true }
 

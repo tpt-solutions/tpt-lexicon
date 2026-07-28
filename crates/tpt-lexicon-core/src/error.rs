@@ -48,7 +48,10 @@ impl fmt::Display for Error {
             Self::MalformedVocabEntry { index } => {
                 write!(f, "malformed vocabulary entry at index {index}")
             }
-            Self::UnsupportedVocabVersion { found, expected_max } => {
+            Self::UnsupportedVocabVersion {
+                found,
+                expected_max,
+            } => {
                 write!(
                     f,
                     "unsupported vocabulary version {found} (max supported: {expected_max})"
@@ -56,7 +59,10 @@ impl fmt::Display for Error {
             }
             Self::CorruptedVocabData => write!(f, "vocabulary data is truncated or corrupted"),
             Self::CorpusTooSmall => write!(f, "corpus is too small to produce merges"),
-            Self::InsufficientPairs { available, requested } => write!(
+            Self::InsufficientPairs {
+                available,
+                requested,
+            } => write!(
                 f,
                 "requested {requested} merges but only {available} unique pairs available"
             ),

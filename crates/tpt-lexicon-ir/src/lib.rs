@@ -19,9 +19,9 @@
 //! use tpt_lexicon_ir::{IrForest, IrNode, compress, decompress};
 //!
 //! let forest = IrForest::from_nodes(vec![
-//!     IrNode::text("function foo() { return 1; }"),
-//!     IrNode::text("function bar() { return 2; }"),
-//!     IrNode::text("function baz() { return 3; }"),
+//!     IrNode::code(b"function foo() { return 1; }"),
+//!     IrNode::code(b"function bar() { return 2; }"),
+//!     IrNode::code(b"function baz() { return 3; }"),
 //! ]);
 //!
 //! let (compressed, rules) = compress(&forest, 1);

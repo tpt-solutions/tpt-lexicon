@@ -142,9 +142,7 @@ impl<'a> Parser<'a> {
 
             // Check if this line starts with at least `fence_count` of the
             // fence character.
-            if line.len() >= fence_count
-                && line[..fence_count].iter().all(|&b| b == fence_char)
-            {
+            if line.len() >= fence_count && line[..fence_count].iter().all(|&b| b == fence_char) {
                 // Must be followed by space, newline, or end-of-input.
                 let after_fence = line.get(fence_count).copied();
                 match after_fence {
@@ -286,10 +284,7 @@ impl<'a> Iterator for Parser<'a> {
                     // Check for fenced code block.
                     if line.starts_with(b"```") {
                         let fence_char = b'`';
-                        let fence_count = line
-                            .iter()
-                            .take_while(|&&b| b == fence_char)
-                            .count();
+                        let fence_count = line.iter().take_while(|&&b| b == fence_char).count();
                         self.state = ParserState::InCodeBlock {
                             fence_char,
                             fence_count,
@@ -391,8 +386,8 @@ impl<'a> Iterator for Parser<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::vec::Vec;
     use crate::VERSION;
+    use alloc::vec::Vec;
 
     #[test]
     fn empty_input() {

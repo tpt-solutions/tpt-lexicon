@@ -167,8 +167,10 @@ impl Vocab {
 
         for merge_rank in 0..num_merges as u32 {
             // Count frequency of all adjacent pairs.
-            let mut pair_counts: alloc::collections::BTreeMap<(alloc::vec::Vec<u8>, alloc::vec::Vec<u8>), usize> =
-                alloc::collections::BTreeMap::new();
+            let mut pair_counts: alloc::collections::BTreeMap<
+                (alloc::vec::Vec<u8>, alloc::vec::Vec<u8>),
+                usize,
+            > = alloc::collections::BTreeMap::new();
 
             for window in tokens.windows(2) {
                 let key = (window[0].clone(), window[1].clone());

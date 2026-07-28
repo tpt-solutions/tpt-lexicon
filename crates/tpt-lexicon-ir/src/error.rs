@@ -32,7 +32,10 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::CorruptedData => write!(f, "IR data is truncated or corrupted"),
-            Self::UnsupportedVersion { found, expected_max } => {
+            Self::UnsupportedVersion {
+                found,
+                expected_max,
+            } => {
                 write!(
                     f,
                     "unsupported IR version {found} (max supported: {expected_max})"
@@ -42,7 +45,10 @@ impl fmt::Display for Error {
                 write!(f, "node reference {index} out of bounds (0..{bound})")
             }
             Self::InvalidRule { index } => {
-                write!(f, "compression rule {index} references a non-existent pattern")
+                write!(
+                    f,
+                    "compression rule {index} references a non-existent pattern"
+                )
             }
         }
     }

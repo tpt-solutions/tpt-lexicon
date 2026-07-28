@@ -108,10 +108,7 @@ impl<'a> BpeTokenizer<'a> {
 
         if self.vocab.merge_count() == 0 {
             // No merge rules — each byte is its own token.
-            let tokens: alloc::vec::Vec<Token<'_>> = input
-                .chunks(1)
-                .map(Token::new)
-                .collect();
+            let tokens: alloc::vec::Vec<Token<'_>> = input.chunks(1).map(Token::new).collect();
             return TokenSet::new(input, &tokens);
         }
 
@@ -119,31 +116,23 @@ impl<'a> BpeTokenizer<'a> {
         let mut pieces: alloc::vec::Vec<&[u8]> = input.chunks(1).collect();
 
         // Phase 2: iteratively merge the best pair.
-        loop {
-            match self.vocab.find_best_pair(&pieces) {
-                Some((pair_index, _rank)) => {
-                    let left = pieces[pair_index];
-                    let right = pieces[pair_index + 1];
+        while let Some((pair_index, _rank)) = self.vocab.find_best_pair(&pieces) {
+            let left = pieces[pair_index];
+            let right = pieces[pair_index + 1];
 
-                    // Build merged slice: since left and right are contiguous
-                    // sub-slices of `input`, compute the merged range.
-                    let left_start = (left.as_ptr() as usize) - (input.as_ptr() as usize);
-                    let right_end =
-                        (right.as_ptr() as usize) - (input.as_ptr() as usize) + right.len();
-                    let merged = &input[left_start..right_end];
+            // Build merged slice: since left and right are contiguous
+            // sub-slices of `input`, compute the merged range.
+            let left_start = (left.as_ptr() as usize) - (input.as_ptr() as usize);
+            let right_end = (right.as_ptr() as usize) - (input.as_ptr() as usize) + right.len();
+            let merged = &input[left_start..right_end];
 
-                    pieces[pair_index] = merged;
-                    pieces.remove(pair_index + 1);
-                }
-                None => break,
-            }
+            pieces[pair_index] = merged;
+            pieces.remove(pair_index + 1);
         }
 
         // Convert pieces to tokens.
-        let tokens: alloc::vec::Vec<Token<'_>> = pieces
-            .iter()
-            .map(|&piece| Token::new(piece))
-            .collect();
+        let tokens: alloc::vec::Vec<Token<'_>> =
+            pieces.iter().map(|&piece| Token::new(piece)).collect();
 
         TokenSet::new(input, &tokens)
     }
@@ -231,7 +220,11 @@ mod tests {
         let tok = BpeTokenizer::new(&vocab);
 
         let tokens = tok.encode(b"ab");
-        assert!(tokens.len() <= 2, "expected merged tokens, got {}", tokens.len());
+        assert!(
+            tokens.len() <= 2,
+            "expected merged tokens, got {}",
+            tokens.len()
+        );
 
         let decoded = tokens.as_bytes();
         assert_eq!(decoded, b"ab");
