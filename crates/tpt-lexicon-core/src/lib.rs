@@ -44,10 +44,12 @@
 extern crate alloc;
 
 mod error;
+mod sram;
 mod token;
 mod vocab;
 
 pub use crate::error::{Error, Result};
+pub use crate::sram::{find_best_pair_indexed, MergeIndex};
 pub use crate::token::{Token, TokenSet};
 pub use crate::vocab::{MergeEntry, SpecialToken, Vocab};
 
@@ -143,6 +145,54 @@ impl<'a> BpeTokenizer<'a> {
     #[cfg(feature = "alloc")]
     pub fn encode_to_vec<'b>(&self, input: &'b [u8]) -> alloc::vec::Vec<Token<'b>> {
         self.encode(input).iter().copied().collect()
+    }
+
+    /// Encode `input` using a pre-built [`MergeIndex`] for O(1) pair lookups.
+    ///
+    /// This is significantly faster than [`encode`](Self::encode) for large
+    /// vocabularies because it replaces the linear scan over merge rules with
+    /// hash-indexed lookups.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tpt_lexicon_core::{BpeTokenizer, Vocab};
+    ///
+    /// let vocab = Vocab::train(b"abc abc def", 5).unwrap();
+    /// let index = vocab.merge_index();
+    /// let tok = BpeTokenizer::new(&vocab);
+    /// let tokens = tok.encode_indexed(b"abc", &index);
+    /// assert_eq!(tokens.as_bytes(), b"abc");
+    /// ```
+    pub fn encode_indexed<'b>(&self, input: &'b [u8], index: &MergeIndex) -> TokenSet<'b> {
+        if input.is_empty() {
+            return TokenSet::new(input, &[]);
+        }
+
+        if self.vocab.merge_count() == 0 || index.is_empty() {
+            let tokens: alloc::vec::Vec<Token<'_>> = input.chunks(1).map(Token::new).collect();
+            return TokenSet::new(input, &tokens);
+        }
+
+        let mut pieces: alloc::vec::Vec<&[u8]> = input.chunks(1).collect();
+
+        while let Some((pair_index, _rank)) = find_best_pair_indexed(&pieces, index) {
+            let left = pieces[pair_index];
+            let right = pieces[pair_index + 1];
+
+            let left_start = (left.as_ptr() as usize) - (input.as_ptr() as usize);
+            let right_end =
+                (right.as_ptr() as usize) - (input.as_ptr() as usize) + right.len();
+            let merged = &input[left_start..right_end];
+
+            pieces[pair_index] = merged;
+            pieces.remove(pair_index + 1);
+        }
+
+        let tokens: alloc::vec::Vec<Token<'_>> =
+            pieces.iter().map(|&piece| Token::new(piece)).collect();
+
+        TokenSet::new(input, &tokens)
     }
 }
 

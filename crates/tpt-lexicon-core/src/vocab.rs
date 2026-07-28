@@ -20,6 +20,7 @@
 use core::fmt;
 
 use crate::error::{Error, Result};
+use crate::sram::MergeIndex;
 
 /// Magic bytes identifying TPT Lexicon vocabulary files.
 pub const MAGIC: &[u8; 4] = b"TPLX";
@@ -114,6 +115,26 @@ impl Vocab {
     #[inline]
     pub fn specials(&self) -> &[SpecialToken] {
         &self.specials
+    }
+
+    /// Build a cache-resident [`MergeIndex`] for O(1) amortized pair lookups.
+    ///
+    /// The index pre-computes a hash table over all merge rules, replacing the
+    /// O(pairs × merges) linear scan with O(pairs) where each lookup is O(1)
+    /// amortized. Ideal for vocabularies up to ~100K merges (fits in L2 cache).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tpt_lexicon_core::Vocab;
+    ///
+    /// let vocab = Vocab::train(b"hello world hello", 10).unwrap();
+    /// let index = vocab.merge_index();
+    /// assert!(!index.is_empty());
+    /// ```
+    #[inline]
+    pub fn merge_index(&self) -> MergeIndex {
+        MergeIndex::from_merges(&self.merges)
     }
 
     /// Find the highest-priority (lowest-rank) adjacent byte-pair in `tokens`.
