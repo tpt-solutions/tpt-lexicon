@@ -190,11 +190,7 @@ mod properties {
                 let input = rng.next_bytes(50);
                 let t1 = tok1.encode(&input);
                 let t2 = tok2.encode(&input);
-                assert_eq!(
-                    t1.len(),
-                    t2.len(),
-                    "token count mismatch at seed {seed}"
-                );
+                assert_eq!(t1.len(), t2.len(), "token count mismatch at seed {seed}");
             }
         }
     }

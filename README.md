@@ -27,6 +27,9 @@ See the [`examples/`](examples/) directory for runnable end-to-end demos:
 | `cargo run --example quickstart` | Train → tokenize → decode |
 | `cargo run --example pipeline` | Ingest → IR → compress → verify → translate |
 | `cargo run --example hf_import` | Load HuggingFace `tokenizer.json` → translate |
+| `cargo run -p tpt-lexicon-cli <file>` | CLI pipeline tool (stdin or file) |
+
+For a ready-to-use project skeleton, see the [`templates/starter/`](templates/starter/) directory.
 
 ## Architecture
 
@@ -52,6 +55,7 @@ graph LR
 | [`tpt-lexicon-verify`](crates/tpt-lexicon-verify) | Formal verification of IR edits and outputs | yes |
 | [`tpt-lexicon-translate`](crates/tpt-lexicon-translate) | Legacy BPE bridge + cross-IR translation (Tree-sitter, LSP, LLVM IR) | yes |
 | [`tpt-lexicon-gpu`](crates/tpt-lexicon-gpu) | Optional wgpu/CUDA/Metal acceleration | no (feature-gated, opt-in) |
+| [`tpt-lexicon-cli`](crates/tpt-lexicon-cli) | CLI pipeline tool: ingest → IR → verify → translate | n/a (binary) |
 
 Each crate is independently usable — `tpt-lexicon-core` has no dependency on the rest of the workspace, and `tpt-lexicon-gpu` is entirely optional.
 

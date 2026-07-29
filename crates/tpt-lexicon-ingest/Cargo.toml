@@ -13,5 +13,16 @@ categories = ["parsing", "no-std", "text-processing"]
 
 [dependencies]
 tpt-lexicon-core = { workspace = true }
+tree-sitter = { version = "0.24", optional = true }
+tree-sitter-rust = { version = "0.21", optional = true }
+tree-sitter-typescript = { version = "0.21", optional = true }
 
-[dev-dependencies]
+[features]
+std = []
+tree-sitter = ["std", "dep:tree-sitter"]
+tree-sitter-rust = ["tree-sitter", "dep:tree-sitter-rust"]
+tree-sitter-typescript = ["tree-sitter", "dep:tree-sitter-typescript"]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tree-sitter = { version = "0.24" }
+tree-sitter-rust = { version = "0.21" }

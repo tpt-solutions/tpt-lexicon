@@ -29,5 +29,8 @@ fn main() {
 
     // 4. Decode back.
     let decoded = bridge.decode_ids(&ids);
-    println!("Decoded: {:?}", std::str::from_utf8(&decoded).unwrap_or("<binary>"));
+    println!(
+        "Decoded: {:?}",
+        std::str::from_utf8(&decoded).unwrap_or("<binary>")
+    );
 }

@@ -84,5 +84,8 @@ fn compress_decompress_exact_window_boundary() {
     let decompressed = decompress(&compressed, &rules);
     assert_eq!(collect_bytes(&decompressed), original_bytes);
     // The repeated pattern should have produced at least one rule.
-    assert!(!rules.is_empty(), "repeated 4-byte pattern must produce a rule");
+    assert!(
+        !rules.is_empty(),
+        "repeated 4-byte pattern must produce a rule"
+    );
 }

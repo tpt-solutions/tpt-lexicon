@@ -1,0 +1,19 @@
+[package]
+name = "tpt-lexicon-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "CLI for the TPT Lexicon pipeline: ingest, compress, verify, and translate."
+readme = "README.md"
+keywords = ["tokenizer", "cli", "nlp", "compression", "llm"]
+categories = ["text-processing", "command-line-utilities"]
+
+[dependencies]
+tpt-lexicon-core = { workspace = true }
+tpt-lexicon-ingest = { workspace = true }
+tpt-lexicon-ir = { workspace = true }
+tpt-lexicon-verify = { workspace = true, features = ["std"] }
+tpt-lexicon-translate = { workspace = true }

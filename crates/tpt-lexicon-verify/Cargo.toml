@@ -11,6 +11,9 @@ readme = "README.md"
 keywords = ["verification", "formal-methods", "static-analysis", "no-std"]
 categories = ["development-tools", "no-std"]
 
+[features]
+std = []
+
 [dependencies]
 tpt-lexicon-core = { workspace = true }
 tpt-lexicon-ir = { workspace = true }

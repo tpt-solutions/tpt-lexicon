@@ -289,8 +289,14 @@ mod tests {
         );
 
         // Nodes 1 and 2 are full-payload matches — must be Compressed.
-        assert!(matches!(compressed.get(1).unwrap(), IrNode::Compressed { .. }));
-        assert!(matches!(compressed.get(2).unwrap(), IrNode::Compressed { .. }));
+        assert!(matches!(
+            compressed.get(1).unwrap(),
+            IrNode::Compressed { .. }
+        ));
+        assert!(matches!(
+            compressed.get(2).unwrap(),
+            IrNode::Compressed { .. }
+        ));
 
         // Decompression must restore the payload content for compressed nodes.
         let decompressed = decompress(&compressed, &rules);

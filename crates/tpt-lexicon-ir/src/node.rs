@@ -18,6 +18,7 @@ pub const MAX_SUPPORTED_VERSION: u32 = 1;
 /// Each node carries a type tag and a borrowed byte payload. Nodes can
 /// reference other nodes by index for composition.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub enum IrNode<'a> {
     /// Plain text content.
     Text(&'a [u8]),
@@ -103,6 +104,7 @@ impl<'a> IrNode<'a> {
 /// byte slices from the original input or placeholder indices that get
 /// substituted with argument nodes during decompression.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub enum TemplateToken<'a> {
     /// Literal bytes from the original input.
     Literal(&'a [u8]),
@@ -113,6 +115,7 @@ pub enum TemplateToken<'a> {
 /// A compression rule: describes a repeating pattern and its replacement
 /// template.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct CompressRule<'a> {
     /// The body of the rule as a sequence of template tokens.
     pub body: Vec<TemplateToken<'a>>,

@@ -181,8 +181,7 @@ impl<'a> BpeTokenizer<'a> {
             let right = pieces[pair_index + 1];
 
             let left_start = (left.as_ptr() as usize) - (input.as_ptr() as usize);
-            let right_end =
-                (right.as_ptr() as usize) - (input.as_ptr() as usize) + right.len();
+            let right_end = (right.as_ptr() as usize) - (input.as_ptr() as usize) + right.len();
             let merged = &input[left_start..right_end];
 
             pieces[pair_index] = merged;

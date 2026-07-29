@@ -2,6 +2,15 @@
 
 use core::fmt;
 
+#[cfg(feature = "std")]
+extern crate std as std_crate;
+
+#[cfg(feature = "std")]
+impl std_crate::error::Error for Error {}
+
+#[cfg(feature = "std")]
+impl std_crate::error::Error for VerifyError {}
+
 /// Specific verification failure.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum VerifyError {

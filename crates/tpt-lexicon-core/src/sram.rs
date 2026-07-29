@@ -146,10 +146,7 @@ fn fnv1a(data: &[u8]) -> u64 {
 /// This replaces the O(pairs × merges) linear scan in
 /// [`Vocab::find_best_pair`](crate::Vocab::find_best_pair) with an
 /// O(pairs) scan where each pair lookup is O(1) amortized.
-pub fn find_best_pair_indexed(
-    tokens: &[&[u8]],
-    index: &MergeIndex,
-) -> Option<(usize, u32)> {
+pub fn find_best_pair_indexed(tokens: &[&[u8]], index: &MergeIndex) -> Option<(usize, u32)> {
     if tokens.len() < 2 {
         return None;
     }

@@ -11,8 +11,12 @@ readme = "README.md"
 keywords = ["ir", "compression", "ast", "no-std", "serialization"]
 categories = ["data-structures", "no-std", "compression"]
 
+[features]
+serde = ["dep:serde"]
+
 [dependencies]
 tpt-lexicon-core = { workspace = true }
+serde = { version = "1", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]
 proptest = { version = "1", default-features = false, features = ["std"] }

@@ -8,6 +8,7 @@ members = [
     "crates/tpt-lexicon-translate",
     "crates/tpt-lexicon-gpu",
     "examples",
+    "crates/tpt-lexicon-cli",
 ]
 
 [workspace.package]

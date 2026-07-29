@@ -51,11 +51,7 @@ fn ingest_then_ir_verify_translate() {
 
     // 5. Decompress and check round-trip fidelity.
     let decompressed = decompress(&compressed, &rules);
-    let original_bytes: Vec<&[u8]> = forest
-        .nodes()
-        .iter()
-        .filter_map(|n| n.as_bytes())
-        .collect();
+    let original_bytes: Vec<&[u8]> = forest.nodes().iter().filter_map(|n| n.as_bytes()).collect();
     let roundtrip_bytes: Vec<&[u8]> = decompressed
         .nodes()
         .iter()
@@ -69,7 +65,11 @@ fn ingest_then_ir_verify_translate() {
     // 6. Translate: unroll bytes to legacy token IDs and decode back.
     let unique_bytes: Vec<u8> = {
         let mut seen = std::collections::HashSet::new();
-        b"return 42;\n ".iter().copied().filter(|b| seen.insert(*b)).collect()
+        b"return 42;\n "
+            .iter()
+            .copied()
+            .filter(|b| seen.insert(*b))
+            .collect()
     };
     let vocab = byte_vocab(&unique_bytes);
     let bridge = LegacyBridge::new(&vocab);

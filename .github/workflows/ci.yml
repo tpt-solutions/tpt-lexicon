@@ -72,6 +72,16 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo check --workspace
 
+  benches:
+    name: benches (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo bench -p tpt-lexicon-core -- --sample-size 10
+        continue-on-error: true
+
   docs:
     name: cargo doc
     runs-on: ubuntu-latest

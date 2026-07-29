@@ -1,0 +1,19 @@
+[package]
+name = "my-lexicon-project"
+version = "0.1.0"
+edition = "2021"
+
+# Pick the crates you need:
+#   core    — zero-copy BPE tokenizer (no_std, no deps)
+#   ingest  — streaming parser with boundary detection (no_std)
+#   ir      — fractal compression IR (no_std)
+#   verify  — structural invariant checker (no_std)
+#   translate — JIT unrolling + HuggingFace import (std)
+#   gpu     — GPU-accelerated tokenization (std, optional)
+[dependencies]
+tpt-lexicon-core = "0.1"
+tpt-lexicon-ingest = "0.1"
+tpt-lexicon-ir = "0.1"
+tpt-lexicon-verify = "0.1"
+tpt-lexicon-translate = "0.1"
+# tpt-lexicon-gpu = "0.1"         # uncomment for GPU support

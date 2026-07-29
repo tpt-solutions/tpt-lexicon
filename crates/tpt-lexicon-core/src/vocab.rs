@@ -34,6 +34,7 @@ pub const MAX_SUPPORTED_VERSION: u32 = 1;
 /// A byte-pair merge rule: two adjacent byte sequences that were merged during
 /// training, assigned a rank (lower = merged first = higher priority).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MergeEntry {
     /// Left side of the merge pair.
     pub left: alloc::vec::Vec<u8>,
@@ -54,6 +55,7 @@ impl MergeEntry {
 
 /// A named special token (e.g., `<|bos|>`, `<|eos|>`, `<|pad|>`).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SpecialToken {
     /// Human-readable name (e.g., `"bos"`).
     pub name: alloc::vec::Vec<u8>,
@@ -76,6 +78,7 @@ pub struct SpecialToken {
 /// assert!(vocab.merge_count() > 0);
 /// ```
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Vocab {
     /// Merge rules, sorted by rank (ascending = highest priority first).
     pub(crate) merges: alloc::vec::Vec<MergeEntry>,

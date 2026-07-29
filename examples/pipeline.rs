@@ -18,16 +18,17 @@ fn main() {
     }
 
     // 2. Build an IR forest from the chunks.
-    let nodes: Vec<IrNode<'_>> = chunks
-        .iter()
-        .map(|c| IrNode::text(c.bytes))
-        .collect();
+    let nodes: Vec<IrNode<'_>> = chunks.iter().map(|c| IrNode::text(c.bytes)).collect();
     let forest = IrForest::from_nodes(nodes);
     println!("\nIR forest: {} nodes", forest.node_count());
 
     // 3. Compress repeated patterns.
     let (compressed_forest, rules) = compress(&forest, 10);
-    println!("After compression: {} nodes, {} rules", compressed_forest.node_count(), rules.len());
+    println!(
+        "After compression: {} nodes, {} rules",
+        compressed_forest.node_count(),
+        rules.len()
+    );
 
     // 4. Verify structural integrity (including rule-index bounds and arity).
     match verify_with_rules(&compressed_forest, &rules) {

@@ -13,6 +13,13 @@
 //! | JSON | Balanced `{}`/`[]` at the top level |
 //! | Paragraph | Two or more consecutive blank lines |
 //!
+//! # Feature flags
+//!
+//! - `tree-sitter`: Enable syntax-aware chunking via Tree-sitter grammars.
+//! - `tree-sitter-rust`: Support Rust grammar in the Tree-sitter chunker.
+//! - `tree-sitter-typescript`: Support TypeScript/TSX grammar in the
+//!   Tree-sitter chunker.
+//!
 //! # Examples
 //!
 //! ```
@@ -23,14 +30,20 @@
 //! assert!(chunks.len() >= 2);
 //! assert_eq!(chunks[0].kind, ChunkKind::Markdown);
 //! ```
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 
 extern crate alloc;
 
+#[cfg(feature = "std")]
+extern crate std;
+
 mod error;
 mod parser;
+
+#[cfg(feature = "tree-sitter")]
+pub mod treesitter;
 
 pub use crate::error::{Error, ParseError, Result};
 pub use crate::parser::{Chunk, ChunkKind, Parser};

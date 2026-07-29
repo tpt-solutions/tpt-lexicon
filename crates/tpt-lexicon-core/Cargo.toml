@@ -14,8 +14,10 @@ categories = ["text-processing", "no-std", "parser-implementations"]
 [features]
 default = ["alloc"]
 alloc = []
+serde = ["dep:serde"]
 
 [dependencies]
+serde = { version = "1", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.5", default-features = false, features = ["html_reports"] }
