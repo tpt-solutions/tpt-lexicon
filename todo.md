@@ -25,15 +25,15 @@ mirror spec §8.
 - [x] Vocabulary loading format (internal binary layout, versioned)
 - [x] Unit tests: round-trip encode/decode correctness against reference BPE
 - [x] Property tests: arbitrary UTF-8 input never panics, never allocates outside caller buffers
-- [ ] Benchmark harness (criterion or similar) vs. Hugging Face `tokenizers` reference implementation
+- [x] Benchmark harness (criterion or similar) vs. Hugging Face `tokenizers` reference implementation (benches/tokenize.rs)
 - [ ] Document and validate **G1**: sub-millisecond tokenization of 100K-token input (record hardware baseline)
 - [ ] Document and validate **G2**: audit crate for zero hidden allocation (miri / allocator-counting test)
 
 ## Phase 2 — IR & Fractal Compression (spec §7, weeks 5–10)
 
 - [x] `tpt-lexicon-ingest`: streaming parser core (chunk iterator API, no full-string buffering)
-- [ ] `tpt-lexicon-ingest`: Tree-sitter interop for Rust
-- [ ] `tpt-lexicon-ingest`: Tree-sitter interop for TypeScript
+- [x] `tpt-lexicon-ingest`: Tree-sitter interop for Rust (feature-gated `treesitter` module + `tree-sitter-rust` grammar)
+- [x] `tpt-lexicon-ingest`: Tree-sitter interop for TypeScript (feature-gated `tree-sitter-typescript` grammar)
 - [x] `tpt-lexicon-ingest`: Markdown boundary detection
 - [x] `tpt-lexicon-ingest`: JSON boundary detection
 - [x] `tpt-lexicon-ingest`: natural-language paragraph boundary detection
@@ -103,21 +103,21 @@ mirror spec §8.
 - [x] Fix broken README code examples in all 5 crate READMEs (snippets now compile against actual public API)
 - [x] Add `cargo test --doc --workspace` to CI so README examples are compiled and can't silently drift again
 - [x] Add workspace-level `examples/` directory: `quickstart.rs`, `pipeline.rs`, `hf_import.rs`
-- [ ] Add minimal starter-project template (`Cargo.toml` + `main.rs`) showing recommended crate combination
+- [x] Add minimal starter-project template (`Cargo.toml` + `main.rs`) showing recommended crate combination
 - [x] Add "Quickstart" section at top of root `README.md` with copy-pastable example, linking to `examples/`
 - [x] Add top-level integration test exercising ingest → IR → verify → translate together
 
 ### C — Automation / CI hardening
 
 - [x] Add `proptest` dev-dependency + property tests for `tpt-lexicon-core` (done in previous session)
-- [ ] Add `benches/` directory with `criterion` benchmarks for the tokenizer, wired into CI as informational (non-blocking) job
+- [x] Add `benches/` directory with `criterion` benchmarks for the tokenizer, wired into CI as informational (non-blocking) job
 - [x] Delete the stray duplicate `todo - 1260728.md`
 
 ### D — Innovative additions (discuss before committing)
 
-- [ ] Small CLI (`tpt-lexicon-cli` crate or `xtask`) wrapping the pipeline end-to-end for manual experimentation
-- [ ] Architecture diagram (mermaid, in root README) showing ingest → core → ir → verify/translate/gpu data flow
-- [ ] Consider an opt-in `serde` feature flag for IR/vocab serialization (JSON export) without compromising `no_std`/zero-dep core goals
+- [x] Small CLI (`tpt-lexicon-cli` crate) wrapping the pipeline end-to-end for manual experimentation
+- [x] Architecture diagram (mermaid, in root README) showing ingest → core → ir → verify/translate/gpu data flow
+- [x] Consider an opt-in `serde` feature flag for IR/vocab serialization (JSON export) without compromising `no_std`/zero-dep core goals
 
 ## crates.io Release Readiness (all 6 crates released together as `v0.1.0`)
 
