@@ -13,11 +13,13 @@ categories = ["rendering", "science", "hardware-support"]
 
 [features]
 default = []
-wgpu = []
+wgpu = ["dep:wgpu"]
 cuda = []
 metal = []
 
 [dependencies]
 tpt-lexicon-core = { workspace = true }
+wgpu = { version = "0.19", optional = true }
 
 [dev-dependencies]
+wgpu = { version = "0.19" }

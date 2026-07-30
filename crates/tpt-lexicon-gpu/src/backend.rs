@@ -120,8 +120,12 @@ mod tests {
 
     #[test]
     fn backend_availability() {
-        // Without features enabled, none should be available.
+        // Availability depends on which features are enabled.
+        // Without features, none should be available.
+        #[cfg(not(feature = "wgpu"))]
         assert!(!GpuBackend::Wgpu.is_available());
+        #[cfg(feature = "wgpu")]
+        assert!(GpuBackend::Wgpu.is_available());
         assert!(!GpuBackend::Cuda.is_available());
         assert!(!GpuBackend::Metal.is_available());
     }
@@ -129,7 +133,10 @@ mod tests {
     #[test]
     fn new_returns_err_when_unavailable() {
         let result = GpuTokenizer::new(GpuBackend::Wgpu);
+        #[cfg(not(feature = "wgpu"))]
         assert!(matches!(result, Err(GpuError::BackendUnavailable { .. })));
+        #[cfg(feature = "wgpu")]
+        assert!(result.is_ok());
     }
 
     #[test]
